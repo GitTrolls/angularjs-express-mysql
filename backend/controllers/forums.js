@@ -42,15 +42,9 @@ module.exports = {
         }
         if(!where) {
             Forum.getRoot(function (err, forum) {
-                if (err || !forum) {
-                    log.error(err);
-                    return next(err);
-                }
+                if (err || !forum) return next(err);
                 Forum.getDescendantsCount(forum.id, function (err, count) {
-                    if (err) {
-                        log.error(err);
-                        return next(err);
-                    }
+                    if (err) return next(err);
                     if (count > 0) {
                         Forum.getDescendantsLevel(forum.id, page, perPages, function (err, forums) {
                             if (err) return next(err);
@@ -73,10 +67,7 @@ module.exports = {
             sql = 'SELECT f.* FROM forums f \n'+
                   ' WHERE 1 = 1 '+ where;
             req.db.driver.execQuery('SELECT COUNT(*) AS total FROM ('+ sql+') tbl;', function(err, count){
-                if(err) {
-                    log.error(err);
-                    return next(err);
-                }
+                if(err) return next(err);
                 var total = count[0].total;
                 if( total > 0){
                     req.db.driver.execQuery(sql, function(err, forums){
